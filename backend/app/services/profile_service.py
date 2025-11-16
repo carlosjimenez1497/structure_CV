@@ -1,39 +1,29 @@
 from app.models.profile_models import UserProfile
-from app.db.fake_db import DB_PROFILES
-import uuid
+from app.db.store import add_profile, get_profile_by_user_id, update_profile
 
 class ProfileService:
-
     def create(self, profile: UserProfile, user_id: str):
-        # Check if the user already has a profile
-        for p_id, p_data in DB_PROFILES.items():
-            if p_data["user_id"] == user_id:
-                raise ValueError("User already has a profile")
+        pid, existing = get_profile_by_user_id(user_id)
+        if existing:
+            raise ValueError("User already has a profile")
 
-        profile_id = str(uuid.uuid4())
-        DB_PROFILES[profile_id] = {
-            "profile_id": profile_id,
+        profile_id = add_profile({
             "user_id": user_id,
-            **profile.dict()
-        }
+            **profile.dict(),
+        })
         return profile_id
 
-    def get_profile_by_user(self, user_id: str):
-        for pid, profile in DB_PROFILES.items():
-            if profile["user_id"] == user_id:
-                return pid, profile
-        return None, None
+    def get_by_user(self, user_id: str):
+        return get_profile_by_user_id(user_id)
 
-    def update_from_structured_data(self, user_id: str, new_data: dict):
-        pid, profile = self.get_profile_by_user(user_id)
-        if not profile:
+    def update_from_structured_data(self, user_id: str, data: dict):
+        pid, existing = get_profile_by_user_id(user_id)
+        if not existing:
             raise ValueError("User has no profile")
 
-        # Merge new structured fields (non-destructive)
-        updated = copy.deepcopy(profile)
-        for key, value in new_data.items():
-            if value not in [None, [], ""]:
-                updated[key] = value
+        merged = {**existing}
+        for k, v in data.items():
+            if v not in [None, "", [], {}]:
+                merged[k] = v
 
-        DB_PROFILES[pid] = updated
-        return updated
+        return update_profile(pid, merged)

@@ -1,30 +1,31 @@
-from app.models.user_models import UserRegister, UserLogin
+from sqlmodel import select
+from fastapi import Depends, HTTPException
+from app.db.engine import get_session
+from app.db.models import User
 from app.core.auth import hash_password, verify_password, create_access_token
-from app.db.fake_db import DB_USERS
-import uuid
 
 class AuthService:
 
-    def register(self, data: UserRegister):
-        # Check if username taken
-        for user in DB_USERS.values():
-            if user["username"] == data.username:
-                raise ValueError("Username already exists")
-        
-        user_id = str(uuid.uuid4())
-        DB_USERS[user_id] = {
-            "user_id": user_id,
-            "username": data.username,
-            "password_hash": hash_password(data.password)
-        }
-        return user_id
+    def register(self, data, session):
+        existing = session.exec(select(User).where(User.username == data.username)).first()
+        if existing:
+            raise ValueError("Username already exists")
 
-    def login(self, data: UserLogin):
-        # Find user
-        for user in DB_USERS.values():
-            if user["username"] == data.username:
-                if verify_password(data.password, user["password_hash"]):
-                    token = create_access_token(user["user_id"])
-                    return token
-                raise ValueError("Invalid password")
-        raise ValueError("User not found")
+        user = User(
+            username=data.username,
+            password_hash=hash_password(data.password)
+        )
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return user.user_id
+
+    def login(self, data, session):
+        user = session.exec(select(User).where(User.username == data.username)).first()
+        if not user:
+            raise ValueError("User not found")
+
+        if not verify_password(data.password, user.password_hash):
+            raise ValueError("Invalid password")
+
+        return create_access_token(user.user_id)

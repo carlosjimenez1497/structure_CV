@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
 import uuid
-from app.db.fake_db import DB_USERS
 
 SECRET_KEY = "super-secret-key-change-later"
 ALGORITHM = "HS256"

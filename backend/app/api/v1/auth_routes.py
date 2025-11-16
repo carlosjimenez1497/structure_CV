@@ -6,17 +6,11 @@ router = APIRouter()
 service = AuthService()
 
 @router.post("/register")
-async def register(user: UserRegister):
-    try:
-        user_id = service.register(user)
-        return {"status": "success", "user_id": user_id}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+async def register(user: UserRegister, session=Depends(get_session)):
+    user_id = service.register(user, session)
+    return {"user_id": user_id}
 
 @router.post("/login")
-async def login(user: UserLogin):
-    try:
-        token = service.login(user)
-        return {"access_token": token, "token_type": "bearer"}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+async def login(user: UserLogin, session=Depends(get_session)):
+    token = service.login(user, session)
+    return {"access_token": token}

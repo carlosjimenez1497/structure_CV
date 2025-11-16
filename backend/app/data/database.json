@@ -1,0 +1,10 @@
+{
+  "users": {
+    "d10d9d52-c38d-4d63-8126-5b429372f0d0": {
+      "username": "Gosh",
+      "password_hash": "$2b$12$4dgfdVBnLZDhGMgq3VFaRe3jJT2FB7xjT7Nw87YRnH2kHWlDwzeqC",
+      "user_id": "d10d9d52-c38d-4d63-8126-5b429372f0d0"
+    }
+  },
+  "profiles": {}
+}
