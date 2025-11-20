@@ -33,3 +33,8 @@ class CVGenerated(BaseModel):
     sections: List[Section]
     skills: List[str]
     latex: Optional[str] = None
+
+
+class CVTargetRequest(BaseModel):
+    profile_id: int
+    job_description: str
