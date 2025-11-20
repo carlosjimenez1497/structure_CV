@@ -18,7 +18,7 @@ async def root():
 
 @app.on_event("startup")
 def on_startup():
-    init_db()
+    pass
 
 # Routers
 app.include_router(auth_router,    prefix="/api/v1/auth",    tags=["Auth"])

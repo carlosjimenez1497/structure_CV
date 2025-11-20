@@ -12,5 +12,6 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = Field("gpt-4o-mini", env="OPENAI_MODEL")
     MAX_TOKENS: int = Field(2000, env="MAX_TOKENS")
     TEMPERATURE: float = Field(0.2, env="TEMPERATURE")
+    SUPABASE_DB_URL: str = Field(..., env="SUPABASE_DB_URL")
 
 settings = Settings()
