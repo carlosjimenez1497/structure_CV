@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from app.api.v1.cv_routes import router as cv_router
 from app.api.v1.auth_routes import router as auth_router
 from app.api.v1.profile_routes import router as profile_router
-from app.db.engine import init_db
+# from app.db.engine import init_db
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="CV Builder API",
@@ -24,3 +25,11 @@ def on_startup():
 app.include_router(auth_router,    prefix="/api/v1/auth",    tags=["Auth"])
 app.include_router(profile_router, prefix="/api/v1/profile", tags=["Profile"])
 app.include_router(cv_router,      prefix="/api/v1/cv",      tags=["CV Builder"])
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or ["http://localhost:5173"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
