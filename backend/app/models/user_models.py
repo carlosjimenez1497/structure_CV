@@ -1,11 +1,12 @@
 from pydantic import BaseModel
 
 class UserRegister(BaseModel):
-    username: str
+    email: str
     password: str
+    full_name: str | None = None
 
 class UserLogin(BaseModel):
-    username: str
+    email: str
     password: str
 
 class UserAccount(BaseModel):

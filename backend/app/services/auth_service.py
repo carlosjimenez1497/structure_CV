@@ -7,13 +7,14 @@ from app.core.auth import hash_password, verify_password, create_access_token
 class AuthService:
 
     def register(self, data, session):
-        existing = session.exec(select(User).where(User.username == data.username)).first()
+        existing = session.exec(select(User).where(User.email == data.email)).first()
         if existing:
             raise ValueError("Username already exists")
 
         user = User(
-            username=data.username,
-            password_hash=hash_password(data.password)
+            email=data.email,
+            password_hash=hash_password(data.password),
+            full_name=data.full_name
         )
         session.add(user)
         session.commit()
@@ -21,7 +22,7 @@ class AuthService:
         return user.user_id
 
     def login(self, data, session):
-        user = session.exec(select(User).where(User.username == data.username)).first()
+        user = session.exec(select(User).where(User.email == data.email)).first()
         if not user:
             raise ValueError("User not found")
 

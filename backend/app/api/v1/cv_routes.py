@@ -1,6 +1,10 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from app.models.cv_models import CVInput, CVGenerated, Section
 from app.services.cv_service import CVService
+from sqlmodel import Session
+from app.db.engine import get_session
+from app.core.deps import get_current_user
+from app.models.cv_models import CVTargetRequest
 
 router = APIRouter()
 svc = CVService()

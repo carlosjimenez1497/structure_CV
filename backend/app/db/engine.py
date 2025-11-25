@@ -8,8 +8,8 @@ DATABASE_URL = settings.SUPABASE_DB_URL
 
 engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 
-def init_db():
-    SQLModel.metadata.create_all(engine)
+# def init_db():
+#     SQLModel.metadata.create_all(engine)
 
 SessionLocal = sessionmaker(
     engine,
@@ -20,8 +20,5 @@ SessionLocal = sessionmaker(
 
 
 def get_session():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    with Session(engine) as session:
+        yield session

@@ -7,8 +7,15 @@ class User(SQLModel, table=True):
         default_factory=lambda: str(uuid.uuid4()),
         primary_key=True, index=True
     )
-    username: str = Field(index=True, unique=True)
+    # NEW FIELDS
+    email: str = Field(index=True, unique=True)
+    full_name: Optional[str] = None
+
+    # OLD FIELD (rename it if you want)
     password_hash: str
+
+    # deprecate old username field:
+    # username: str = Field(index=True, unique=True)
 
     # relationship
     profile: Optional["Profile"] = Relationship(back_populates="user")
